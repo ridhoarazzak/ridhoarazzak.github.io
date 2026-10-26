@@ -30,9 +30,9 @@ nav button{flex:1;border:0;background:none;color:#b9c8bb;padding:12px 4px;font-s
 nav button.on{color:#fff;font-weight:700;border-top-color:#f2c200}
 :focus-visible{outline:2px solid #f2c200;outline-offset:2px}
 </style></head><body>
-<header><h1>WebGIS Solok Selatan<small>Solok Selatan Data Initiative</small></h1><button id="lp">Lapisan</button></header>
+<header><h1>WebGIS Solok Selatan<small>Solok Selatan Data Initiative · v5</small></h1><button id="lp">Lapisan</button></header>
 <main>
-<section class="pane on" id="p-peta"><div id="map"></div>
+<section class="pane on" id="p-peta"><div id="map"><div id="ld" style="padding:60px 16px 0;color:#5b6a5f">Memuat peta… <noscript>JavaScript dimatikan di browser ini.</noscript></div></div>
 <div class="fl" id="lg"></div>
 <div class="fl" id="pn">
 <h3>Peta dasar</h3>
@@ -57,8 +57,9 @@ nav button.on{color:#fff;font-weight:700;border-top-color:#f2c200}
 <nav><button data-t="peta" class="on">Peta padi</button><button data-t="bisnis">Peluang bisnis</button><button data-t="galodo">Simulasi galodo</button></nav>
 <script>
 const $=i=>document.getElementById(i);let N,J,I,K,B,TH="Sentra padi",map;
-function err(m){$('sc').innerHTML='<b>Galat:</b> '+m+'<br><span class="nt">Pastikan data.json ada di folder yang sama dengan index.html.</span>';$('sh').classList.add('on')}
-window.addEventListener('error',e=>err(e.message));
+function ensureML(){return typeof maplibregl!=='undefined'?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js';s.onload=ok;s.onerror=()=>no(new Error('MapLibre gagal dimuat (jsdelivr dan cdnjs). Cek sinyal atau DNS.'));document.head.appendChild(s);const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.css';document.head.appendChild(l)})}
+function err(m){if($('ld'))$('ld').textContent='Galat: '+m;$('sc').innerHTML='<b>Galat:</b> '+m+'<br><span class="nt">Pastikan data.json ada di folder yang sama dengan index.html.</span>';$('sh').classList.add('on')}
+window.addEventListener('error',e=>err(e.message));window.addEventListener('unhandledrejection',e=>err(String(e.reason)));
 function init(){
 const COL={"Besar":"#1b6b00","Sedang":"#50c878","Kecil":"#f2c200","Tidak ada sawah terdeteksi":"#9e9e9e"};
 const LBL={"Besar":"Besar","Sedang":"Sedang","Kecil":"Kecil","Tidak ada sawah terdeteksi":"Tidak ada sawah"};
@@ -130,6 +131,5 @@ if(t==='peta'&&map)map.resize();history.replaceState(null,'','#'+t)}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
 tab(location.hash.slice(1));
 fetch('data.json').then(r=>{if(!r.ok)throw new Error('data.json tidak ditemukan ('+r.status+')');return r.json()})
-.then(D=>{if(typeof maplibregl==='undefined')throw new Error('MapLibre gagal dimuat dari CDN');({N,J,I,K,B}=D);init()}).catch(e=>err(e.message));
+.then(D=>ensureML().then(()=>{({N,J,I,K,B}=D);if($('ld'))$('ld').remove();init()})).catch(e=>err(e.message));
 </script></body></html>
-  

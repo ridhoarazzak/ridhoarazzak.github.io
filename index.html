@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="id"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WebGIS Solok Selatan</title>
+<style>
+ html,body{margin:0;height:100%;font-family:system-ui,sans-serif}
+ body{display:flex;flex-direction:column}
+ iframe{flex:1;border:0;width:100%}
+ nav{display:flex;background:#14532d;padding-bottom:env(safe-area-inset-bottom)}
+ nav button{flex:1;padding:12px 4px;border:0;background:none;color:#cbd5c0;font-size:13px}
+ nav button.on{color:#fff;font-weight:700;border-top:3px solid #facc15}
+</style></head><body>
+<iframe id="f" allow="fullscreen"></iframe>
+<nav id="n"></nav>
+<script>
+const menu=[
+ ["🌾 Sawah Padi","https://ridhoarazzak.github.io/Sawah-padi-Solok-selatan-/"],
+ ["💼 Peluang Bisnis","https://ridhoarazzak.github.io/Peluang-bisnis-Solok-Selatan-/"],
+ ["🌊 Galodo","https://ridhoarazzak.github.io/SG/"]
+];
+const n=document.getElementById('n'),f=document.getElementById('f');
+menu.forEach(([t,u],i)=>{
+ const b=document.createElement('button');b.textContent=t;
+ b.onclick=()=>{f.src=u;[...n.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');location.hash=i};
+ n.appendChild(b);
+});
+n.children[+location.hash.slice(1)||0].click();
+</script></body></html>
